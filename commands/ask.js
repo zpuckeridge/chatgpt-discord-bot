@@ -13,7 +13,16 @@ module.exports = {
   async execute(interaction) {
     const prompt = interaction.options.getString("prompt");
     await interaction.deferReply();
-    const answer = await ask(`${prompt}`);
-    await interaction.editReply(answer);
+
+    // Create a thread
+    const thread = await interaction.channel.threads.create({
+      name: `Answering: ${prompt}`,
+      autoArchiveDuration: 60,
+      reason: `Answering: ${prompt}`,
+    });
+
+    // Get the answer from the AI and send it in the thread
+    const answer = await ask(prompt);
+    await thread.send(answer);
   },
 };
